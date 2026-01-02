@@ -1,255 +1,240 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{% if rule %}Edit Rule #{{ rule.id }}{% else %}New Rule{% endif %} - URL Forwarder Manager</title>
-    <style>
-      :root {
-        --bg: #0b1020;
-        --panel: #111a33;
-        --text: #e9eefc;
-        --muted: #a9b5d1;
-        --border: rgba(255, 255, 255, 0.12);
-        --accent: #7aa2ff;
-        --bad: #ff6b6b;
-        --good: #3ddc97;
-      }
-      body {
-        margin: 0;
-        font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Apple Color Emoji",
-          "Segoe UI Emoji";
-        background: radial-gradient(1200px 800px at 20% 10%, rgba(122, 162, 255, 0.18), transparent 60%),
-          radial-gradient(1200px 800px at 80% 40%, rgba(61, 220, 151, 0.12), transparent 55%),
-          var(--bg);
-        color: var(--text);
-      }
-      .wrap {
-        max-width: 900px;
-        margin: 40px auto;
-        padding: 0 16px;
-      }
-      header {
-        display: flex;
-        justify-content: space-between;
-        gap: 16px;
-        align-items: center;
-        margin-bottom: 16px;
-      }
-      h1 {
-        font-size: 18px;
-        margin: 0;
-      }
-      .btn {
-        display: inline-block;
-        background: rgba(122, 162, 255, 0.15);
-        color: var(--text);
-        border: 1px solid var(--border);
-        padding: 10px 12px;
-        border-radius: 10px;
-        text-decoration: none;
-        font-weight: 700;
-        font-size: 13px;
-      }
-      .btn:hover {
-        border-color: rgba(122, 162, 255, 0.35);
-      }
-      .panel {
-        background: rgba(17, 26, 51, 0.85);
-        border: 1px solid var(--border);
-        border-radius: 14px;
-        overflow: hidden;
-        padding: 16px;
-      }
-      .row {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 14px;
-      }
-      label {
-        display: block;
-        font-weight: 700;
-        font-size: 13px;
-        margin: 0 0 6px 0;
-      }
-      .help {
-        color: var(--muted);
-        font-size: 12px;
-        margin-top: 6px;
-        line-height: 1.35;
-      }
-      input[type="text"],
-      input[type="number"],
-      select {
-        width: 100%;
-        box-sizing: border-box;
-        border-radius: 10px;
-        border: 1px solid rgba(255, 255, 255, 0.14);
-        background: rgba(0, 0, 0, 0.15);
-        color: var(--text);
-        padding: 10px 10px;
-        font-size: 13px;
-        outline: none;
-      }
-      input[type="text"]:focus,
-      input[type="number"]:focus,
-      select:focus {
-        border-color: rgba(122, 162, 255, 0.45);
-      }
-      .full {
-        margin-top: 14px;
-      }
-      .actions {
-        display: flex;
-        gap: 10px;
-        align-items: center;
-        margin-top: 16px;
-        flex-wrap: wrap;
-      }
-      .btn.secondary {
-        background: transparent;
-      }
-      .btn.primary {
-        background: rgba(61, 220, 151, 0.12);
-      }
-      .error {
-        margin: 0 0 14px 0;
-        padding: 10px 12px;
-        border-radius: 10px;
-        border: 1px solid rgba(255, 107, 107, 0.35);
-        background: rgba(255, 107, 107, 0.12);
-        color: var(--text);
-        font-weight: 700;
-        font-size: 13px;
-      }
-      .checkbox {
-        display: flex;
-        gap: 10px;
-        align-items: center;
-      }
-      .checkbox input {
-        width: 18px;
-        height: 18px;
-      }
-      code {
-        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-        font-size: 12px;
-        color: #dbe7ff;
-      }
-    </style>
-  </head>
-  <body>
-    <div class="wrap">
-      <header>
-        <div>
-          <h1>
-            {% if rule %}Edit Rule <code>#{{ rule.id }}</code>{% else %}New Rule{% endif %}
-          </h1>
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>{% if rule %}Edit Rule #{{ rule.id }}{% else %}New Rule{% endif %} - Redirector</title>
+    <link href="https://fonts.googleapis.com" rel="preconnect"/>
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&amp;family=Noto+Sans:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#135bec",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#101622",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"],
+                        "body": ["Noto Sans", "sans-serif"],
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+    <script>
+        // Use browser's confirmation dialog for delete
+        function confirmDelete(id) {
+          return confirm("Delete rule #" + id + "? This cannot be undone.");
+        }
+    </script>
+</head>
+<body class="font-display bg-background-light dark:bg-background-dark text-slate-900 dark:text-white antialiased transition-colors duration-200">
+<div class="relative flex min-h-screen w-full flex-col overflow-x-hidden">
+    <!-- Navigation -->
+    <header class="sticky top-0 z-50 flex items-center justify-between border-b border-slate-200 dark:border-[#232f48] bg-white/80 dark:bg-[#111722]/80 backdrop-blur-md px-6 py-4 md:px-10">
+        <div class="flex items-center gap-4">
+            <h2 class="text-xl font-bold leading-tight tracking-tight text-slate-900 dark:text-white">Redirector</h2>
         </div>
-        <div>
-          <a class="btn secondary" href="/admin">&larr; Back</a>
+        <div class="hidden md:flex flex-1 justify-end gap-8 items-center">
+            <nav class="flex items-center gap-6">
+                <a class="text-sm font-medium text-slate-600 hover:text-primary dark:text-slate-300 dark:hover:text-white transition-colors" href="/admin">Dashboard</a>
+            </nav>
+            <div class="h-6 w-px bg-slate-200 dark:bg-slate-700"></div>
+            <div class="flex items-center gap-3">
+                <div class="h-8 w-8 rounded-full bg-gradient-to-tr from-primary to-blue-400" data-alt="User profile"></div>
+            </div>
         </div>
-      </header>
+    </header>
 
-      <div class="panel">
-        {% if error %}
-          <div class="error">{{ error }}</div>
-        {% endif %}
+    <!-- Main Content -->
+    <main class="flex-1 px-4 py-8 md:px-10 lg:px-20 xl:px-40 flex justify-center">
+        <div class="w-full max-w-5xl flex flex-col gap-6">
 
-        <form method="post" action="/admin/save">
-          {% if rule %}
-            <input type="hidden" name="id" value="{{ rule.id }}" />
-          {% endif %}
-
-          <div class="row">
-            <div>
-              <label for="host">Host (domain)</label>
-              <input
-                id="host"
-                name="host"
-                type="text"
-                placeholder="example.com (blank = match any)"
-                value="{{ rule.host if rule and rule.host else '' }}"
-              />
-              <div class="help">Matches against <code>X-Forwarded-Host</code> (preferred) or the request host (port stripped).</div>
+            <!-- Error Display -->
+            {% if error %}
+            <div class="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-600 dark:border-red-900/50 dark:bg-red-900/20 dark:text-red-400">
+                <strong>Error:</strong> {{ error }}
             </div>
+            {% endif %}
 
-            <div>
-              <label for="path_prefix">Path prefix</label>
-              <input
-                id="path_prefix"
-                name="path_prefix"
-                type="text"
-                placeholder="/blog (blank = match any)"
-                value="{{ rule.path_prefix if rule and rule.path_prefix else '' }}"
-              />
-              <div class="help">More specific (longer) prefixes win. Prefix matching only; not regex.</div>
+            <form method="post" action="/admin/save">
+                {% if rule %}
+                <input type="hidden" name="id" value="{{ rule.id }}" />
+                {% endif %}
+
+                <!-- Page Heading & Actions -->
+                <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-6">
+                    <div class="flex flex-col gap-2">
+                        <div class="flex items-center gap-2 text-slate-500 dark:text-slate-400 text-sm mb-1">
+                            <span class="material-symbols-outlined text-[18px]">arrow_back</span>
+                            <a class="hover:underline" href="/admin">Back to Rules</a>
+                        </div>
+                        <h1 class="text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
+                            {% if rule %}Edit Forwarding Rule{% else %}New Forwarding Rule{% endif %}
+                        </h1>
+                        <p class="text-slate-500 dark:text-[#92a4c9]">Configure the matching logic and destination for this URL redirect.</p>
+                    </div>
+                    <div class="flex gap-3 mt-2 md:mt-0">
+                        <a href="/admin" class="flex h-10 items-center justify-center rounded-lg border border-slate-200 bg-white px-4 text-sm font-bold text-slate-700 hover:bg-slate-50 dark:border-slate-700 dark:bg-[#232f48] dark:text-white dark:hover:bg-[#2f3e5c] transition-colors">
+                            Cancel
+                        </a>
+                        <button type="submit" class="flex h-10 items-center justify-center rounded-lg bg-primary px-6 text-sm font-bold text-white shadow-md shadow-blue-500/20 hover:bg-blue-600 transition-colors">
+                            Save Changes
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Form Card -->
+                <div class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm dark:border-[#232f48] dark:bg-[#111722]">
+                    
+                    <!-- Match Logic Section -->
+                    <div class="mb-8">
+                        <h3 class="flex items-center gap-2 text-lg font-bold text-slate-900 dark:text-white mb-4">
+                            <span class="material-symbols-outlined text-primary">link</span>
+                            Match Criteria
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <label class="flex flex-col gap-2">
+                                <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Host Domain</span>
+                                <div class="relative">
+                                    <input name="host" class="w-full rounded-lg border border-slate-300 bg-slate-50 px-4 py-3 text-sm text-slate-900 placeholder-slate-400 focus:border-primary focus:bg-white focus:outline-none focus:ring-1 focus:ring-primary dark:border-[#324467] dark:bg-[#192233] dark:text-white dark:placeholder-[#92a4c9]" 
+                                           placeholder="e.g., mysite.com (blank = match any)" type="text" 
+                                           value="{{ rule.host if rule and rule.host else '' }}"/>
+                                </div>
+                                <span class="text-xs text-slate-500 dark:text-slate-500">Matches against X-Forwarded-Host or request host.</span>
+                            </label>
+                            <label class="flex flex-col gap-2">
+                                <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Path Prefix</span>
+                                <input name="path_prefix" class="w-full rounded-lg border border-slate-300 bg-slate-50 px-4 py-3 text-sm text-slate-900 placeholder-slate-400 focus:border-primary focus:bg-white focus:outline-none focus:ring-1 focus:ring-primary dark:border-[#324467] dark:bg-[#192233] dark:text-white dark:placeholder-[#92a4c9]" 
+                                       placeholder="e.g., /blog (blank = match any)" type="text" 
+                                       value="{{ rule.path_prefix if rule and rule.path_prefix else '' }}"/>
+                                <span class="text-xs text-slate-500 dark:text-slate-500">Requests starting with this path will be redirected.</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="h-px w-full bg-slate-100 dark:bg-[#232f48] my-6"></div>
+
+                    <!-- Destination Section -->
+                    <div class="mb-8">
+                        <h3 class="flex items-center gap-2 text-lg font-bold text-slate-900 dark:text-white mb-4">
+                            <span class="material-symbols-outlined text-primary">output</span>
+                            Destination &amp; Behavior
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+                            <!-- Target URL -->
+                            <label class="flex flex-col gap-2 md:col-span-8">
+                                <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Target Base URL</span>
+                                <input name="target_base" class="w-full rounded-lg border border-slate-300 bg-slate-50 px-4 py-3 text-sm text-slate-900 placeholder-slate-400 focus:border-primary focus:bg-white focus:outline-none focus:ring-1 focus:ring-primary dark:border-[#324467] dark:bg-[#192233] dark:text-white dark:placeholder-[#92a4c9]" 
+                                       placeholder="https://destination.com" type="text" required
+                                       value="{{ rule.target_base if rule else '' }}"/>
+                            </label>
+                            <!-- Redirect Code -->
+                            <label class="flex flex-col gap-2 md:col-span-4">
+                                <span class="text-sm font-medium text-slate-700 dark:text-slate-300">HTTP Code</span>
+                                <div class="relative">
+                                    <select name="code" class="w-full appearance-none rounded-lg border border-slate-300 bg-slate-50 px-4 py-3 text-sm text-slate-900 focus:border-primary focus:bg-white focus:outline-none focus:ring-1 focus:ring-primary dark:border-[#324467] dark:bg-[#192233] dark:text-white">
+                                        {% set current_code = (rule.code if rule else 302) %}
+                                        {% for c in allowed_codes %}
+                                          <option value="{{ c }}" {% if c == current_code %}selected{% endif %}>{{ c }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <span class="pointer-events-none absolute right-3 top-3 text-slate-500 material-symbols-outlined">expand_more</span>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="h-px w-full bg-slate-100 dark:bg-[#232f48] my-6"></div>
+
+                    <!-- Settings Section -->
+                    <div>
+                        <h3 class="flex items-center gap-2 text-lg font-bold text-slate-900 dark:text-white mb-4">
+                            <span class="material-symbols-outlined text-primary">tune</span>
+                            Settings
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <!-- Priority Input -->
+                            <label class="flex flex-col gap-2">
+                                <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Priority Order</span>
+                                <div class="flex items-center gap-3">
+                                    <input name="sort_order" class="w-24 rounded-lg border border-slate-300 bg-slate-50 px-4 py-3 text-sm text-slate-900 focus:border-primary focus:bg-white focus:outline-none focus:ring-1 focus:ring-primary dark:border-[#324467] dark:bg-[#192233] dark:text-white" 
+                                           type="number" value="{{ rule.sort_order if rule else 0 }}"/>
+                                    <span class="text-xs text-slate-500 dark:text-slate-400">Lower numbers run first.</span>
+                                </div>
+                            </label>
+                            <!-- Toggles Group -->
+                            <div class="flex flex-col gap-5 justify-center">
+                                <!-- Strip Prefix Toggle -->
+                                <div class="flex items-center justify-between">
+                                    <div class="flex flex-col">
+                                        <span class="text-sm font-medium text-slate-900 dark:text-white">Strip Path Prefix</span>
+                                        <span class="text-xs text-slate-500 dark:text-slate-400">Remove the matched prefix from the target path</span>
+                                    </div>
+                                    <label class="relative inline-flex cursor-pointer items-center">
+                                        {% set is_strip = (rule.strip_prefix if rule else True) %}
+                                        <input name="strip_prefix" type="checkbox" class="peer sr-only" {% if is_strip %}checked{% endif %} />
+                                        <div class="peer h-6 w-11 rounded-full bg-slate-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-primary peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-primary/50 dark:bg-slate-700 dark:border-gray-600"></div>
+                                    </label>
+                                </div>
+                                <!-- Enabled Toggle -->
+                                <div class="flex items-center justify-between">
+                                    <div class="flex flex-col">
+                                        <span class="text-sm font-medium text-slate-900 dark:text-white">Rule Enabled</span>
+                                        <span class="text-xs text-slate-500 dark:text-slate-400">Activate this forwarding rule immediately</span>
+                                    </div>
+                                    <label class="relative inline-flex cursor-pointer items-center">
+                                        {% set is_enabled = (rule.enabled if rule else True) %}
+                                        <input name="enabled" type="checkbox" class="peer sr-only" {% if is_enabled %}checked{% endif %} />
+                                        <div class="peer h-6 w-11 rounded-full bg-slate-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-primary peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-primary/50 dark:bg-slate-700 dark:border-gray-600"></div>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer Info -->
+                <div class="mt-8 rounded-lg bg-blue-50 p-4 border border-blue-100 dark:bg-blue-900/20 dark:border-blue-800/50">
+                    <div class="flex gap-3">
+                        <span class="material-symbols-outlined text-primary shrink-0">info</span>
+                        <div class="flex flex-col gap-1">
+                            <p class="text-sm font-bold text-slate-900 dark:text-white">How it works</p>
+                            <p class="text-sm text-slate-600 dark:text-slate-300">
+                                Requests matching the <strong>Host</strong> and <strong>Path Prefix</strong> are redirected to <strong>Target Base URL</strong>.<br>
+                                Query parameters are always preserved. Path is appended unless stripped.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+            </form>
+
+            <!-- Danger Zone (Delete) -->
+            {% if rule %}
+            <div class="flex justify-end pt-4">
+                <form method="post" action="/admin/delete/{{ rule.id }}" onsubmit="return confirmDelete({{ rule.id }});">
+                    <button type="submit" class="flex items-center gap-2 text-sm font-medium text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 transition-colors">
+                        <span class="material-symbols-outlined text-[18px]">delete</span>
+                        Delete Rule
+                    </button>
+                </form>
             </div>
-          </div>
+            {% endif %}
 
-          <div class="full">
-            <label for="target_base">Target base URL</label>
-            <input
-              id="target_base"
-              name="target_base"
-              type="text"
-              placeholder="https://target.com or https://target.com/base"
-              value="{{ rule.target_base if rule else '' }}"
-              required
-            />
-            <div class="help">
-              The request path + query string are appended. Example: target <code>https://foo.com/base</code> and request
-              <code>/bar?x=1</code> &rarr; <code>https://foo.com/base/bar?x=1</code>.
-            </div>
-          </div>
+        </div>
+    </main>
 
-          <div class="row full">
-            <div>
-              <label for="code">Redirect code</label>
-              <select id="code" name="code">
-                {% set current_code = (rule.code if rule else 302) %}
-                {% for c in allowed_codes %}
-                  <option value="{{ c }}" {% if c == current_code %}selected{% endif %}>{{ c }}</option>
-                {% endfor %}
-              </select>
-              <div class="help">Allowed: 301, 302, 307, 308.</div>
-            </div>
-
-            <div>
-              <label for="sort_order">Sort order</label>
-              <input
-                id="sort_order"
-                name="sort_order"
-                type="number"
-                value="{{ rule.sort_order if rule else 0 }}"
-              />
-              <div class="help">Lower wins when host + prefix specificity are tied.</div>
-            </div>
-          </div>
-
-          <div class="full checkbox">
-            {% set is_enabled = (rule.enabled if rule else True) %}
-            <input id="enabled" name="enabled" type="checkbox" {% if is_enabled %}checked{% endif %} />
-            <label for="enabled" style="margin: 0;">Enabled</label>
-          </div>
-
-          <div class="full checkbox">
-            {% set is_strip = (rule.strip_prefix if rule else True) %}
-            <input id="strip_prefix" name="strip_prefix" type="checkbox" {% if is_strip %}checked{% endif %} />
-            <label for="strip_prefix" style="margin: 0;">Strip path prefix</label>
-          </div>
-          <div class="help" style="margin-top: 8px;">
-            If enabled, a request to <code>/prefix</code> redirects to the target base, and <code>/prefix/foo</code> becomes <code>/foo</code>.
-          </div>
-
-          <div class="actions">
-            <button class="btn primary" type="submit">Save</button>
-            <a class="btn secondary" href="/admin">Cancel</a>
-          </div>
-        </form>
-      </div>
-    </div>
-  </body>
+    <footer class="py-6 text-center text-sm text-slate-500 dark:text-slate-400">
+        Redirector - a Product Advance Rocket Ship 🚀
+    </footer>
+</div>
+</body>
 </html>
-
-
