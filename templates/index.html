@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>URL Forwarder Manager</title>
+    <style>
+      :root {
+        --bg: #0b1020;
+        --panel: #111a33;
+        --text: #e9eefc;
+        --muted: #a9b5d1;
+        --border: rgba(255, 255, 255, 0.12);
+        --accent: #7aa2ff;
+        --bad: #ff6b6b;
+        --good: #3ddc97;
+        --warn: #ffd166;
+      }
+      body {
+        margin: 0;
+        font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Apple Color Emoji",
+          "Segoe UI Emoji";
+        background: radial-gradient(1200px 800px at 20% 10%, rgba(122, 162, 255, 0.18), transparent 60%),
+          radial-gradient(1200px 800px at 80% 40%, rgba(61, 220, 151, 0.12), transparent 55%),
+          var(--bg);
+        color: var(--text);
+      }
+      .wrap {
+        max-width: 1100px;
+        margin: 40px auto;
+        padding: 0 16px;
+      }
+      header {
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+        align-items: center;
+        margin-bottom: 16px;
+      }
+      h1 {
+        font-size: 20px;
+        margin: 0;
+        letter-spacing: 0.2px;
+      }
+      .sub {
+        margin: 6px 0 0 0;
+        color: var(--muted);
+        font-size: 13px;
+      }
+      .btn {
+        display: inline-block;
+        background: rgba(122, 162, 255, 0.15);
+        color: var(--text);
+        border: 1px solid var(--border);
+        padding: 10px 12px;
+        border-radius: 10px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 13px;
+      }
+      .btn:hover {
+        border-color: rgba(122, 162, 255, 0.35);
+      }
+      .panel {
+        background: rgba(17, 26, 51, 0.85);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        overflow: hidden;
+      }
+      .table-wrap {
+        overflow-x: auto;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        table-layout: fixed;
+        min-width: 920px;
+      }
+      th,
+      td {
+        padding: 12px 12px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        vertical-align: top;
+        text-align: left;
+        font-size: 13px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      th {
+        color: var(--muted);
+        font-weight: 700;
+        font-size: 12px;
+        letter-spacing: 0.3px;
+        text-transform: uppercase;
+      }
+      tr:last-child td {
+        border-bottom: none;
+      }
+      code {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+        font-size: 12px;
+        color: #dbe7ff;
+      }
+      .pill {
+        display: inline-flex;
+        gap: 8px;
+        align-items: center;
+        padding: 4px 8px;
+        border-radius: 999px;
+        border: 1px solid var(--border);
+        font-weight: 700;
+        font-size: 12px;
+      }
+      .pill.good {
+        border-color: rgba(61, 220, 151, 0.35);
+        color: var(--good);
+      }
+      .pill.bad {
+        border-color: rgba(255, 107, 107, 0.35);
+        color: var(--bad);
+      }
+      .actions {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+      .btn.secondary {
+        background: transparent;
+      }
+      .btn.danger {
+        background: rgba(255, 107, 107, 0.12);
+      }
+      .hint {
+        color: var(--muted);
+        font-size: 12px;
+        margin: 10px 0 0 0;
+      }
+      .empty {
+        padding: 18px 14px;
+        color: var(--muted);
+      }
+      .truncate code {
+        display: block;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      /* Keep action buttons reachable even when horizontally scrolling */
+      th.actions-col,
+      td.actions-col {
+        position: sticky;
+        right: 0;
+        background: rgba(17, 26, 51, 0.98);
+        border-left: 1px solid rgba(255, 255, 255, 0.08);
+        z-index: 2;
+      }
+      th.actions-col {
+        z-index: 3;
+      }
+      .actions-col .actions {
+        justify-content: flex-end;
+        flex-wrap: nowrap;
+      }
+      .actions-col form {
+        margin: 0;
+      }
+    </style>
+    <script>
+      function confirmDelete(id) {
+        return confirm("Delete rule #" + id + "? This cannot be undone.");
+      }
+    </script>
+  </head>
+  <body>
+    <div class="wrap">
+      <header>
+        <div>
+          <h1>URL Forwarder Manager</h1>
+          <p class="sub">Rules are evaluated by: exact host &rarr; longer path prefix &rarr; lower sort order &rarr; lower id.</p>
+        </div>
+        <div>
+          <a class="btn" href="/admin/new">+ New rule</a>
+        </div>
+      </header>
+
+      <div class="panel">
+        {% if rules|length == 0 %}
+          <div class="empty">
+            No rules yet. Create one with <a href="/admin/new" style="color: var(--accent);">New rule</a>.
+          </div>
+        {% else %}
+          <div class="table-wrap">
+            <table>
+              <colgroup>
+                <col style="width: 72px;" />
+                <col style="width: 110px;" />
+                <col style="width: 240px;" />
+                <col style="width: 200px;" />
+                <col style="width: 360px;" />
+                <col style="width: 80px;" />
+                <col style="width: 90px;" />
+                <col style="width: 80px;" />
+                <col style="width: 180px;" />
+              </colgroup>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Enabled</th>
+                  <th>Host</th>
+                  <th>Path prefix</th>
+                  <th>Target base</th>
+                  <th>Code</th>
+                  <th>Strip</th>
+                  <th>Sort</th>
+                  <th class="actions-col">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for r in rules %}
+                  <tr>
+                    <td><code>#{{ r.id }}</code></td>
+                    <td>
+                      {% if r.enabled %}
+                        <span class="pill good">enabled</span>
+                      {% else %}
+                        <span class="pill bad">disabled</span>
+                      {% endif %}
+                    </td>
+                    <td class="truncate">
+                      <code title="{{ r.host if r.host else '*' }}">{{ r.host if r.host else "*" }}</code>
+                    </td>
+                    <td class="truncate">
+                      <code title="{{ r.path_prefix if r.path_prefix else '*' }}">{{ r.path_prefix if r.path_prefix else "*" }}</code>
+                    </td>
+                    <td class="truncate">
+                      <code title="{{ r.target_base }}">{{ r.target_base }}</code>
+                    </td>
+                    <td><code>{{ r.code }}</code></td>
+                    <td><code>{{ "yes" if r.strip_prefix else "no" }}</code></td>
+                    <td><code>{{ r.sort_order }}</code></td>
+                    <td class="actions-col">
+                      <div class="actions">
+                        <a class="btn secondary" href="/admin/edit/{{ r.id }}">Edit</a>
+                        <form method="post" action="/admin/delete/{{ r.id }}" onsubmit="return confirmDelete({{ r.id }});">
+                          <button class="btn danger" type="submit">Delete</button>
+                        </form>
+                      </div>
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        {% endif %}
+      </div>
+
+      <p class="hint">
+        Tip: To match any domain, leave host blank. To match any path, leave path prefix blank.
+      </p>
+    </div>
+  </body>
+</html>
+
+

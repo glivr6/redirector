@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{% if rule %}Edit Rule #{{ rule.id }}{% else %}New Rule{% endif %} - URL Forwarder Manager</title>
+    <style>
+      :root {
+        --bg: #0b1020;
+        --panel: #111a33;
+        --text: #e9eefc;
+        --muted: #a9b5d1;
+        --border: rgba(255, 255, 255, 0.12);
+        --accent: #7aa2ff;
+        --bad: #ff6b6b;
+        --good: #3ddc97;
+      }
+      body {
+        margin: 0;
+        font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Apple Color Emoji",
+          "Segoe UI Emoji";
+        background: radial-gradient(1200px 800px at 20% 10%, rgba(122, 162, 255, 0.18), transparent 60%),
+          radial-gradient(1200px 800px at 80% 40%, rgba(61, 220, 151, 0.12), transparent 55%),
+          var(--bg);
+        color: var(--text);
+      }
+      .wrap {
+        max-width: 900px;
+        margin: 40px auto;
+        padding: 0 16px;
+      }
+      header {
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+        align-items: center;
+        margin-bottom: 16px;
+      }
+      h1 {
+        font-size: 18px;
+        margin: 0;
+      }
+      .btn {
+        display: inline-block;
+        background: rgba(122, 162, 255, 0.15);
+        color: var(--text);
+        border: 1px solid var(--border);
+        padding: 10px 12px;
+        border-radius: 10px;
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 13px;
+      }
+      .btn:hover {
+        border-color: rgba(122, 162, 255, 0.35);
+      }
+      .panel {
+        background: rgba(17, 26, 51, 0.85);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        overflow: hidden;
+        padding: 16px;
+      }
+      .row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+      }
+      label {
+        display: block;
+        font-weight: 700;
+        font-size: 13px;
+        margin: 0 0 6px 0;
+      }
+      .help {
+        color: var(--muted);
+        font-size: 12px;
+        margin-top: 6px;
+        line-height: 1.35;
+      }
+      input[type="text"],
+      input[type="number"],
+      select {
+        width: 100%;
+        box-sizing: border-box;
+        border-radius: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        background: rgba(0, 0, 0, 0.15);
+        color: var(--text);
+        padding: 10px 10px;
+        font-size: 13px;
+        outline: none;
+      }
+      input[type="text"]:focus,
+      input[type="number"]:focus,
+      select:focus {
+        border-color: rgba(122, 162, 255, 0.45);
+      }
+      .full {
+        margin-top: 14px;
+      }
+      .actions {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        margin-top: 16px;
+        flex-wrap: wrap;
+      }
+      .btn.secondary {
+        background: transparent;
+      }
+      .btn.primary {
+        background: rgba(61, 220, 151, 0.12);
+      }
+      .error {
+        margin: 0 0 14px 0;
+        padding: 10px 12px;
+        border-radius: 10px;
+        border: 1px solid rgba(255, 107, 107, 0.35);
+        background: rgba(255, 107, 107, 0.12);
+        color: var(--text);
+        font-weight: 700;
+        font-size: 13px;
+      }
+      .checkbox {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+      }
+      .checkbox input {
+        width: 18px;
+        height: 18px;
+      }
+      code {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+        font-size: 12px;
+        color: #dbe7ff;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <header>
+        <div>
+          <h1>
+            {% if rule %}Edit Rule <code>#{{ rule.id }}</code>{% else %}New Rule{% endif %}
+          </h1>
+        </div>
+        <div>
+          <a class="btn secondary" href="/admin">&larr; Back</a>
+        </div>
+      </header>
+
+      <div class="panel">
+        {% if error %}
+          <div class="error">{{ error }}</div>
+        {% endif %}
+
+        <form method="post" action="/admin/save">
+          {% if rule %}
+            <input type="hidden" name="id" value="{{ rule.id }}" />
+          {% endif %}
+
+          <div class="row">
+            <div>
+              <label for="host">Host (domain)</label>
+              <input
+                id="host"
+                name="host"
+                type="text"
+                placeholder="example.com (blank = match any)"
+                value="{{ rule.host if rule and rule.host else '' }}"
+              />
+              <div class="help">Matches against <code>X-Forwarded-Host</code> (preferred) or the request host (port stripped).</div>
+            </div>
+
+            <div>
+              <label for="path_prefix">Path prefix</label>
+              <input
+                id="path_prefix"
+                name="path_prefix"
+                type="text"
+                placeholder="/blog (blank = match any)"
+                value="{{ rule.path_prefix if rule and rule.path_prefix else '' }}"
+              />
+              <div class="help">More specific (longer) prefixes win. Prefix matching only; not regex.</div>
+            </div>
+          </div>
+
+          <div class="full">
+            <label for="target_base">Target base URL</label>
+            <input
+              id="target_base"
+              name="target_base"
+              type="text"
+              placeholder="https://target.com or https://target.com/base"
+              value="{{ rule.target_base if rule else '' }}"
+              required
+            />
+            <div class="help">
+              The request path + query string are appended. Example: target <code>https://foo.com/base</code> and request
+              <code>/bar?x=1</code> &rarr; <code>https://foo.com/base/bar?x=1</code>.
+            </div>
+          </div>
+
+          <div class="row full">
+            <div>
+              <label for="code">Redirect code</label>
+              <select id="code" name="code">
+                {% set current_code = (rule.code if rule else 302) %}
+                {% for c in allowed_codes %}
+                  <option value="{{ c }}" {% if c == current_code %}selected{% endif %}>{{ c }}</option>
+                {% endfor %}
+              </select>
+              <div class="help">Allowed: 301, 302, 307, 308.</div>
+            </div>
+
+            <div>
+              <label for="sort_order">Sort order</label>
+              <input
+                id="sort_order"
+                name="sort_order"
+                type="number"
+                value="{{ rule.sort_order if rule else 0 }}"
+              />
+              <div class="help">Lower wins when host + prefix specificity are tied.</div>
+            </div>
+          </div>
+
+          <div class="full checkbox">
+            {% set is_enabled = (rule.enabled if rule else True) %}
+            <input id="enabled" name="enabled" type="checkbox" {% if is_enabled %}checked{% endif %} />
+            <label for="enabled" style="margin: 0;">Enabled</label>
+          </div>
+
+          <div class="full checkbox">
+            {% set is_strip = (rule.strip_prefix if rule else True) %}
+            <input id="strip_prefix" name="strip_prefix" type="checkbox" {% if is_strip %}checked{% endif %} />
+            <label for="strip_prefix" style="margin: 0;">Strip path prefix</label>
+          </div>
+          <div class="help" style="margin-top: 8px;">
+            If enabled, a request to <code>/prefix</code> redirects to the target base, and <code>/prefix/foo</code> becomes <code>/foo</code>.
+          </div>
+
+          <div class="actions">
+            <button class="btn primary" type="submit">Save</button>
+            <a class="btn secondary" href="/admin">Cancel</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </body>
+</html>
+
+

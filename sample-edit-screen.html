@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Edit Rule Screen - Redirector</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&amp;family=Noto+Sans:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#135bec",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#101622",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"],
+                        "body": ["Noto Sans", "sans-serif"],
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+</head>
+<body class="font-display bg-background-light dark:bg-background-dark text-slate-900 dark:text-white antialiased transition-colors duration-200">
+<div class="relative flex min-h-screen w-full flex-col overflow-x-hidden">
+<!-- Navigation -->
+<header class="sticky top-0 z-50 flex items-center justify-between border-b border-slate-200 dark:border-[#232f48] bg-white/80 dark:bg-[#111722]/80 backdrop-blur-md px-6 py-4 md:px-10">
+<div class="flex items-center gap-4">
+<div class="size-8 text-primary">
+<svg class="w-full h-full" fill="none" viewbox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path d="M44 11.2727C44 14.0109 39.8386 16.3957 33.69 17.6364C39.8386 18.877 44 21.2618 44 24C44 26.7382 39.8386 29.123 33.69 30.3636C39.8386 31.6043 44 33.9891 44 36.7273C44 40.7439 35.0457 44 24 44C12.9543 44 4 40.7439 4 36.7273C4 33.9891 8.16144 31.6043 14.31 30.3636C8.16144 29.123 4 26.7382 4 24C4 21.2618 8.16144 18.877 14.31 17.6364C8.16144 16.3957 4 14.0109 4 11.2727C4 7.25611 12.9543 4 24 4C35.0457 4 44 7.25611 44 11.2727Z" fill="currentColor"></path>
+</svg>
+</div>
+<h2 class="text-xl font-bold leading-tight tracking-tight text-slate-900 dark:text-white">Redirector</h2>
+</div>
+<div class="hidden md:flex flex-1 justify-end gap-8 items-center">
+<nav class="flex items-center gap-6">
+<a class="text-sm font-medium text-slate-600 hover:text-primary dark:text-slate-300 dark:hover:text-white transition-colors" href="#">Dashboard</a>
+<a class="text-sm font-medium text-slate-600 hover:text-primary dark:text-slate-300 dark:hover:text-white transition-colors" href="#">Analytics</a>
+<a class="text-sm font-medium text-slate-600 hover:text-primary dark:text-slate-300 dark:hover:text-white transition-colors" href="#">Settings</a>
+</nav>
+<div class="h-6 w-px bg-slate-200 dark:bg-slate-700"></div>
+<div class="flex items-center gap-3">
+<!-- User Profile Placeholder -->
+<div class="h-8 w-8 rounded-full bg-gradient-to-tr from-primary to-blue-400" data-alt="User profile avatar gradient"></div>
+</div>
+</div>
+<!-- Mobile Menu Icon -->
+<button class="md:hidden text-slate-900 dark:text-white">
+<span class="material-symbols-outlined">menu</span>
+</button>
+</header>
+<!-- Main Content -->
+<main class="flex-1 px-4 py-8 md:px-10 lg:px-20 xl:px-40 flex justify-center">
+<div class="w-full max-w-5xl flex flex-col gap-6">
+<!-- Page Heading & Actions -->
+<div class="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+<div class="flex flex-col gap-2">
+<div class="flex items-center gap-2 text-slate-500 dark:text-slate-400 text-sm mb-1">
+<span class="material-symbols-outlined text-[18px]">arrow_back</span>
+<a class="hover:underline" href="#">Back to Rules</a>
+</div>
+<h1 class="text-3xl font-bold tracking-tight text-slate-900 dark:text-white">Edit Forwarding Rule</h1>
+<p class="text-slate-500 dark:text-[#92a4c9]">Configure the matching logic and destination for this URL redirect.</p>
+</div>
+<div class="flex gap-3 mt-2 md:mt-0">
+<button class="flex h-10 items-center justify-center rounded-lg border border-slate-200 bg-white px-4 text-sm font-bold text-slate-700 hover:bg-slate-50 dark:border-slate-700 dark:bg-[#232f48] dark:text-white dark:hover:bg-[#2f3e5c] transition-colors">
+                            Cancel
+                        </button>
+<button class="flex h-10 items-center justify-center rounded-lg bg-primary px-6 text-sm font-bold text-white shadow-md shadow-blue-500/20 hover:bg-blue-600 transition-colors">
+                            Save Changes
+                        </button>
+</div>
+</div>
+<!-- Form Card -->
+<div class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm dark:border-[#232f48] dark:bg-[#111722]">
+<!-- Match Logic Section -->
+<div class="mb-8">
+<h3 class="flex items-center gap-2 text-lg font-bold text-slate-900 dark:text-white mb-4">
+<span class="material-symbols-outlined text-primary">link</span>
+                            Match Criteria
+                        </h3>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<label class="flex flex-col gap-2">
+<span class="text-sm font-medium text-slate-700 dark:text-slate-300">Host Domain</span>
+<div class="relative">
+<input class="w-full rounded-lg border border-slate-300 bg-slate-50 px-4 py-3 text-sm text-slate-900 placeholder-slate-400 focus:border-primary focus:bg-white focus:outline-none focus:ring-1 focus:ring-primary dark:border-[#324467] dark:bg-[#192233] dark:text-white dark:placeholder-[#92a4c9]" placeholder="e.g., mysite.com" type="text" value="mysite.com"/>
+<span class="absolute right-3 top-3 text-green-500 material-symbols-outlined text-lg">check_circle</span>
+</div>
+<span class="text-xs text-slate-500 dark:text-slate-500">The domain name to listen for.</span>
+</label>
+<label class="flex flex-col gap-2">
+<span class="text-sm font-medium text-slate-700 dark:text-slate-300">Path Prefix</span>
+<input class="w-full rounded-lg border border-slate-300 bg-slate-50 px-4 py-3 text-sm text-slate-900 placeholder-slate-400 focus:border-primary focus:bg-white focus:outline-none focus:ring-1 focus:ring-primary dark:border-[#324467] dark:bg-[#192233] dark:text-white dark:placeholder-[#92a4c9]" placeholder="e.g., /blog" type="text" value="/old-campaign"/>
+<span class="text-xs text-slate-500 dark:text-slate-500">Requests starting with this path will be redirected.</span>
+</label>
+</div>
+</div>
+<div class="h-px w-full bg-slate-100 dark:bg-[#232f48] my-6"></div>
+<!-- Destination Section -->
+<div class="mb-8">
+<h3 class="flex items-center gap-2 text-lg font-bold text-slate-900 dark:text-white mb-4">
+<span class="material-symbols-outlined text-primary">output</span>
+                            Destination &amp; Behavior
+                        </h3>
+<div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+<!-- Target URL takes up more space -->
+<label class="flex flex-col gap-2 md:col-span-8">
+<span class="text-sm font-medium text-slate-700 dark:text-slate-300">Target Base URL</span>
+<input class="w-full rounded-lg border border-slate-300 bg-slate-50 px-4 py-3 text-sm text-slate-900 placeholder-slate-400 focus:border-primary focus:bg-white focus:outline-none focus:ring-1 focus:ring-primary dark:border-[#324467] dark:bg-[#192233] dark:text-white dark:placeholder-[#92a4c9]" placeholder="https://destination.com" type="url" value="https://newsite.com/promotions"/>
+</label>
+<!-- Redirect Code -->
+<label class="flex flex-col gap-2 md:col-span-4">
+<span class="text-sm font-medium text-slate-700 dark:text-slate-300">HTTP Code</span>
+<div class="relative">
+<select class="w-full appearance-none rounded-lg border border-slate-300 bg-slate-50 px-4 py-3 text-sm text-slate-900 focus:border-primary focus:bg-white focus:outline-none focus:ring-1 focus:ring-primary dark:border-[#324467] dark:bg-[#192233] dark:text-white">
+<option selected="" value="301">301 (Permanent)</option>
+<option value="302">302 (Found)</option>
+<option value="307">307 (Temporary)</option>
+<option value="308">308 (Permanent)</option>
+</select>
+<span class="pointer-events-none absolute right-3 top-3 text-slate-500 material-symbols-outlined">expand_more</span>
+</div>
+</label>
+</div>
+</div>
+<div class="h-px w-full bg-slate-100 dark:bg-[#232f48] my-6"></div>
+<!-- Settings Section -->
+<div>
+<h3 class="flex items-center gap-2 text-lg font-bold text-slate-900 dark:text-white mb-4">
+<span class="material-symbols-outlined text-primary">tune</span>
+                            Settings
+                        </h3>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+<!-- Priority Input -->
+<label class="flex flex-col gap-2">
+<span class="text-sm font-medium text-slate-700 dark:text-slate-300">Priority Order</span>
+<div class="flex items-center gap-3">
+<input class="w-24 rounded-lg border border-slate-300 bg-slate-50 px-4 py-3 text-sm text-slate-900 focus:border-primary focus:bg-white focus:outline-none focus:ring-1 focus:ring-primary dark:border-[#324467] dark:bg-[#192233] dark:text-white" type="number" value="10"/>
+<span class="text-xs text-slate-500 dark:text-slate-400">Lower numbers run first.</span>
+</div>
+</label>
+<!-- Toggles Group -->
+<div class="flex flex-col gap-5 justify-center">
+<!-- Strip Prefix Toggle -->
+<div class="flex items-center justify-between">
+<div class="flex flex-col">
+<span class="text-sm font-medium text-slate-900 dark:text-white">Strip Path Prefix</span>
+<span class="text-xs text-slate-500 dark:text-slate-400">Remove the matched prefix from the target path</span>
+</div>
+<label class="relative inline-flex cursor-pointer items-center">
+<input checked="" class="peer sr-only" type="checkbox" value=""/>
+<div class="peer h-6 w-11 rounded-full bg-slate-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-primary peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-primary/50 dark:bg-slate-700 dark:border-gray-600"></div>
+</label>
+</div>
+<!-- Enabled Toggle -->
+<div class="flex items-center justify-between">
+<div class="flex flex-col">
+<span class="text-sm font-medium text-slate-900 dark:text-white">Rule Enabled</span>
+<span class="text-xs text-slate-500 dark:text-slate-400">Activate this forwarding rule immediately</span>
+</div>
+<label class="relative inline-flex cursor-pointer items-center">
+<input checked="" class="peer sr-only" type="checkbox" value=""/>
+<div class="peer h-6 w-11 rounded-full bg-slate-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-primary peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-primary/50 dark:bg-slate-700 dark:border-gray-600"></div>
+</label>
+</div>
+</div>
+</div>
+</div>
+<!-- Footer Info (Optional) -->
+<div class="mt-8 rounded-lg bg-blue-50 p-4 border border-blue-100 dark:bg-blue-900/20 dark:border-blue-800/50">
+<div class="flex gap-3">
+<span class="material-symbols-outlined text-primary shrink-0">info</span>
+<div class="flex flex-col gap-1">
+<p class="text-sm font-bold text-slate-900 dark:text-white">Preview</p>
+<p class="text-sm text-slate-600 dark:text-slate-300 font-mono break-all">
+<span class="text-slate-400">Input:</span> mysite.com/old-campaign/user/123 <br/>
+<span class="text-primary font-bold">➜</span> <span class="text-slate-400">Output:</span> https://newsite.com/promotions/user/123
+                                </p>
+</div>
+</div>
+</div>
+</div>
+<!-- Danger Zone -->
+<div class="flex justify-end pt-4">
+<button class="flex items-center gap-2 text-sm font-medium text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 transition-colors">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+                        Delete Rule
+                    </button>
+</div>
+</div>
+</main>
+</div>
+</body></html>

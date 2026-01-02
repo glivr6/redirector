@@ -1,0 +1,118 @@
+You are Claude Opus 4.5 acting as a senior full-stack engineer who ships quickly and cleanly.
+
+Goal:
+Build a tiny “URL Forwarder Manager” web app that I can deploy on Coolify within minutes.
+It must provide a simple web UI to create/manage redirect rules, and it must actually perform redirects based on those rules.
+No Nginx config generation is required: the app itself should handle redirects. Coolify handles TLS/reverse proxy.
+
+Constraints:
+- Must be extremely simple, reliable, and boring-in-a-good-way.
+- Must run as a single container (Dockerfile included).
+- Must persist rules across redeploys using a mounted directory.
+- Must include a dead-simple UI (HTML templates are fine).
+- Must include basic auth protection for /admin routes with env vars for credentials.
+- Must preserve path + query string when redirecting.
+- Must support host (domain) matching + path prefix matching.
+- Must support redirect codes: 301, 302, 307, 308.
+- Must support enabled/disabled rules and ordering so I can control which rule wins.
+
+Tech Choice (preferred):
+- Python + Flask + SQLite (single-file DB stored under /app/data/redirects.db)
+- Gunicorn for production server
+- No frontend frameworks
+
+Routing Behavior:
+- Admin UI:
+  - GET /admin (list rules)
+  - GET /admin/new (create form)
+  - GET /admin/edit/:id (edit form)
+  - POST /admin/save (create/update)
+  - POST /admin/delete/:id (delete)
+  - All /admin routes require HTTP Basic Auth
+- Redirect behavior:
+  - Any request to /admin* is handled by admin routes only.
+  - All other requests should attempt to match a redirect rule and immediately redirect.
+  - If no rule matches, return a plain-text 404 explaining “No redirect rule matched. Go to /admin to create one.”
+
+Rule Matching:
+- Each rule has fields:
+  - host (nullable/empty = match any host)
+  - path_prefix (nullable/empty = match any path)
+  - target_base (required, like https://target.com or https://target.com/some/base)
+  - code (301 etc)
+  - enabled (bool)
+  - sort_order (int, lower wins)
+- Matching priority:
+  1) exact host match over null host
+  2) longer path_prefix wins (more specific)
+  3) lower sort_order wins
+  4) lower id wins
+- Host should respect reverse proxy headers:
+  - Prefer X-Forwarded-Host when present, otherwise request.host (strip port).
+
+Redirect Composition:
+- Preserve full requested path + query string.
+- Example: If target_base is https://foo.com and request is /bar?x=1
+  redirect -> https://foo.com/bar?x=1
+- Also support target_base that includes a base path, e.g. https://foo.com/base
+  request /bar -> https://foo.com/base/bar
+(Implement safely, avoid double slashes, do not drop query strings.)
+
+Persistence:
+- Use SQLite file at /app/data/redirects.db
+- Create /app/data if missing.
+- Create tables on startup if not present.
+
+Environment Variables:
+- PORT default 8000
+- DB_PATH default /app/data/redirects.db
+- ADMIN_USER default admin
+- ADMIN_PASS default admin
+- Add a warning in README to change credentials.
+
+Deliverables:
+1) Create the complete project with these files:
+   - app.py
+   - requirements.txt
+   - Dockerfile
+   - templates/index.html
+   - templates/edit.html
+   - README.md
+2) README must include:
+   - quickstart locally (docker build/run)
+   - Coolify deployment steps
+   - how to mount volume to /app/data
+   - how to set env vars
+   - how to add multiple domains in Coolify
+3) Ensure code quality:
+   - clear function boundaries
+   - input validation (redirect code allowed values, target_base required)
+   - consistent formatting
+   - no unnecessary dependencies
+4) Make the UI clean and minimal:
+   - simple table list view
+   - edit form with helper text
+   - buttons for edit/delete
+   - confirm delete in browser JS
+   - show enabled status clearly
+5) Make sure everything works behind a reverse proxy:
+   - Use forwarded host header
+   - Do not assume direct internet access
+   - Keep response headers sane
+
+Implementation Notes:
+- Use Gunicorn CMD in Dockerfile:
+  gunicorn -w 2 -b 0.0.0.0:8000 app:app
+- No migrations needed.
+- Avoid complex CSS or JS frameworks.
+- Keep it as a “ship today” tool.
+
+Now implement it in this repository:
+- Create all files and directories.
+- Provide final output as actual file edits (not pseudo-code).
+- After creating the project, include a short test plan:
+  - how to run locally
+  - how to verify redirect matching logic with curl commands
+  - how to verify /admin basic auth works.
+
+Do not ask me questions. Make reasonable defaults. Ship it.

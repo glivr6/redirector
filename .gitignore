@@ -1,0 +1,17 @@
+# Local persistent SQLite folder (mounted to /app/data in the container)
+data/
+
+# SQLite DB files (extra safety)
+*.db
+*.sqlite
+*.sqlite3
+
+# Python
+__pycache__/
+*.pyc
+
+# Local-only secrets (never commit)
+scripts/_secrets.ps1
+scripts/build-and-deploy.local.ps1
+
+
